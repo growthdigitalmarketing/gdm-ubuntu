@@ -58,9 +58,19 @@ RUN echo '<?xml version="1.0" encoding="UTF-8"?>\
   </property>\
 </channel>' > /home/vncuser/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
 
+# Add a script to clean up existing VNC servers and lock files
+RUN echo '#!/bin/bash\n\
+vncserver -kill :1 &> /dev/null || true\n\
+rm -rf /tmp/.X1-lock /tmp/.X11-unix/X1\n\
+vncserver :1 -geometry 1920x1080 -depth 24\n\
+sudo service xrdp start\n\
+tail -f /dev/null' > /home/vncuser/startup.sh
+
+RUN chmod +x /home/vncuser/startup.sh
+
 # Expose VNC and RDP ports
 EXPOSE 5900
 EXPOSE 3389
 
-# Start the VNC and XRDP servers and keep the container running
-CMD ["sh", "-c", "vncserver :1 -geometry 1920x1080 -depth 24 && sudo service xrdp start && tail -f /dev/null"]
+# Start the VNC and XRDP servers using the startup script
+CMD ["/home/vncuser/startup.sh"]
