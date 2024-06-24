@@ -69,7 +69,7 @@ tail -f /dev/null' > /home/vncuser/startup.sh
 RUN chmod +x /home/vncuser/startup.sh
 
 # Expose VNC and RDP ports
-EXPOSE 5900
+EXPOSE 5901
 EXPOSE 3389
 
 # Start the VNC and XRDP servers using the startup script
